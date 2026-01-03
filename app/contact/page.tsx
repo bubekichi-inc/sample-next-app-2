@@ -99,42 +99,36 @@ export default function Page() {
         <form onSubmit={handleSubmit}>
           <FormGroup>
             <Label text="お名前" htmlFor="name" />
-            <div className="w-full">
-              <Input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(value) => setName(value)}
-                disabled={isSubmitting}
-              />
-              <ErrorMessage message={nameErrorMessage} />
-            </div>
+            <Input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(value) => setName(value)}
+              disabled={isSubmitting}
+            />
+            <ErrorMessage message={nameErrorMessage} />
           </FormGroup>
           <FormGroup>
             <Label text="メールアドレス" htmlFor="email" />
-            <div className="w-full">
-              <Input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(value) => setEmail(value)}
-                disabled={isSubmitting}
-              />
-              <ErrorMessage message={emailErrorMessage} />
-            </div>
+            <Input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(value) => setEmail(value)}
+              disabled={isSubmitting}
+            />
+            <ErrorMessage message={emailErrorMessage} />
           </FormGroup>
           <FormGroup>
             <Label text="本文" htmlFor="message" />
-            <div className="w-full">
-              <Textarea
-                id="message"
-                value={message}
-                onChange={(value) => setMessage(value)}
-                disabled={isSubmitting}
-                rows={8}
-              />
-              <ErrorMessage message={messageErrorMessage} />
-            </div>
+            <Textarea
+              id="message"
+              value={message}
+              onChange={(value) => setMessage(value)}
+              disabled={isSubmitting}
+              rows={8}
+            />
+            <ErrorMessage message={messageErrorMessage} />
           </FormGroup>
           <div className="flex justify-center mt-10">
             <button
