@@ -3,19 +3,23 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import classes from '@/app/_styles/Home.module.scss'
-import { API_BASE_URL } from './constants'
-import { Post } from './_types/Post'
+import { MicroCmsPost } from './_types/Post'
 
 
 export default function Home() {
-  const [posts, setPosts] = useState<Post[]>([])
+  const [posts, setPosts] = useState<MicroCmsPost[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetcher = async () => {
-      const res = await fetch(`${API_BASE_URL}/posts`)
-      const { posts } = await res.json()
-      setPosts(posts)
+      const res = await fetch('https://2gzszlwapo.microcms.io/api/v1/posts', {
+        headers: {
+          'X-MICROCMS-API-KEY': process.env
+            .NEXT_PUBLIC_MICROCMS_API_KEY as string,
+        },
+      })
+      const { contents } = await res.json()
+      setPosts(contents)
       setIsLoading(false)
     }
 
@@ -42,10 +46,10 @@ export default function Home() {
                           {post.categories.map((category) => {
                             return (
                               <div
-                                key={category}
+                                key={category.id}
                                 className={classes.postCategory}
                               >
-                                {category}
+                                {category.name}
                               </div>
                             )
                           })}

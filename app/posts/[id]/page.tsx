@@ -4,21 +4,28 @@ import { useEffect, useState } from 'react'
 import classes from '@/app/_styles/Detail.module.scss'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import { API_BASE_URL } from '@/app/constants'
-import { Post } from '@/app/_types/Post'
+import { MicroCmsPost } from '@/app/_types/Post'
 
 export default function Page() {
   // react-routerのuseParamsを使うと、URLのパラメータを取得できます。
   const { id } = useParams()
-  const [post, setPost] = useState<Post | null>(null)
+  const [post, setPost] = useState<MicroCmsPost | null>(null)
   const [loading, setLoading] = useState(true)
 
   // APIでpostsを取得する処理をuseEffectで実行します。
   useEffect(() => {
     const fetcher = async () => {
-      const res = await fetch(`${API_BASE_URL}/posts/${id}`)
-      const { post } = await res.json()
-      setPost(post)
+      const res = await fetch(
+        `https://2gzszlwapo.microcms.io/api/v1/posts/${id}`,
+        {
+          headers: {
+            'X-MICROCMS-API-KEY': process.env
+              .NEXT_PUBLIC_MICROCMS_API_KEY as string,
+          },
+        },
+      )
+      const data = await res.json()
+      setPost(data)
       setLoading(false)
     }
 
@@ -35,7 +42,7 @@ export default function Page() {
     <div className={classes.container}>
       <div className={classes.post}>
         <div className={classes.postImage}>
-          <Image src={post.thumbnailUrl} alt="thumbnail" height={1000} width={1000} />
+          <Image src={post.thumbnail.url} alt="thumbnail" height={1000} width={1000} />
         </div>
         <div className={classes.postContent}>
           <div className={classes.postInfo}>
@@ -45,8 +52,8 @@ export default function Page() {
             <div className={classes.postCategories}>
               {post.categories.map((category) => {
                 return (
-                  <div key={category} className={classes.postCategory}>
-                    {category}
+                  <div key={category.id} className={classes.postCategory}>
+                    {category.name}
                   </div>
                 )
               })}
