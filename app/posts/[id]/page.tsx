@@ -16,7 +16,7 @@ export default function Page() {
   useEffect(() => {
     const fetcher = async () => {
       const res = await fetch(
-        `api/posts/${id}`,
+        `/api/posts/${id}`,
       )
       const { post } = await res.json()
       setPost(post)

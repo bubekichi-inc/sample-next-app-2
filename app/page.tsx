@@ -35,7 +35,7 @@ export default function Home() {
                     <div className={classes.postContent}>
                       <div className={classes.postInfo}>
                         <div className={classes.postDate}>
-                          {post.createdAt.toLocaleDateString()}
+                          {new Date(post.createdAt).toLocaleDateString()}
                         </div>
                         <div className={classes.postCategories}>
                           {post.postCategories.map((postCategory) => {
