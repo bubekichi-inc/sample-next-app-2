@@ -16,16 +16,10 @@ export default function Page() {
   useEffect(() => {
     const fetcher = async () => {
       const res = await fetch(
-        `https://2gzszlwapo.microcms.io/api/v1/posts/${id}`,
-        {
-          headers: {
-            'X-MICROCMS-API-KEY': process.env
-              .NEXT_PUBLIC_MICROCMS_API_KEY as string,
-          },
-        },
+        `api/posts/${id}`,
       )
-      const data = await res.json()
-      setPost(data)
+      const { post } = await res.json()
+      setPost(post)
       setLoading(false)
     }
 

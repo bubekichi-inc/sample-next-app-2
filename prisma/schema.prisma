@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Post {
+  id             Int            @id @default(autoincrement())
+  title          String
+  content        String
+  thumbnailUrl   String         @map("thumbnail_url")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  postCategories PostCategory[]
+}
+
+model Category {
+  id        Int            @id @default(autoincrement())
+  name      String
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+  posts     PostCategory[]
+}
+
+model PostCategory {
+  id         Int      @id @default(autoincrement())
+  postId     Int
+  categoryId Int      @map("category_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
