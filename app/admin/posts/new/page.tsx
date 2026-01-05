@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { PostForm } from '../_components/PostForm'
-import { Category } from '@/app/generated/prisma/client'
+import { Category } from '@/app/api/admin/posts/[id]/route'
+import { CreatePostRequestBody } from '@/app/api/admin/posts/route'
 
 export default function Page() {
   const [title, setTitle] = useState('')
@@ -22,13 +23,15 @@ export default function Page() {
     try {
       setIsSubmitting(true)
 
+      const body: CreatePostRequestBody = { title, content, thumbnailUrl, categories }
+
       // 記事を作成します。
       const res = await fetch('/api/admin/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, content, thumbnailUrl, categories }),
+        body: JSON.stringify(body),
       })
 
       // レスポンスから作成した記事のIDを取得します。

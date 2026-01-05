@@ -1,16 +1,16 @@
 'use client'
 
-import { Post } from '@/app/generated/prisma/client'
+import { PostIndexResponse } from '@/app/api/admin/posts/route'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 export default function Page() {
-  const [posts, setPosts] = useState<Post[]>([])
+  const [posts, setPosts] = useState<PostIndexResponse['posts']>([])
 
   useEffect(() => {
     const fetcher = async () => {
       const res = await fetch('/api/admin/posts')
-      const { posts } = await res.json()
+      const { posts }: PostIndexResponse = await res.json()
       setPosts(posts)
     }
 

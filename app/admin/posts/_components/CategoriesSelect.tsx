@@ -1,4 +1,5 @@
-import { Category } from '@/app/generated/prisma/client'
+
+import { Category } from '@/app/api/admin/posts/[id]/route'
 import * as React from 'react'
 import { useEffect } from 'react'
 

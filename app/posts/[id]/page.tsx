@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react'
 import classes from '@/app/_styles/Detail.module.scss'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import { MicroCmsPost } from '@/app/_types/Post'
+import { PostShowResponse } from '@/app/api/posts/[id]/route'
 
 export default function Page() {
   // react-routerのuseParamsを使うと、URLのパラメータを取得できます。
   const { id } = useParams()
-  const [post, setPost] = useState<MicroCmsPost | null>(null)
+  const [post, setPost] = useState<PostShowResponse["post"] | null>(null)
   const [loading, setLoading] = useState(true)
 
   // APIでpostsを取得する処理をuseEffectで実行します。
@@ -36,7 +36,7 @@ export default function Page() {
     <div className={classes.container}>
       <div className={classes.post}>
         <div className={classes.postImage}>
-          <Image src={post.thumbnail.url} alt="thumbnail" height={1000} width={1000} />
+          <Image src={post.thumbnailUrl} alt="thumbnail" height={1000} width={1000} />
         </div>
         <div className={classes.postContent}>
           <div className={classes.postInfo}>
@@ -44,10 +44,10 @@ export default function Page() {
               {new Date(post.createdAt).toLocaleDateString()}
             </div>
             <div className={classes.postCategories}>
-              {post.categories.map((category) => {
+              {post.postCategories.map((postCategory) => {
                 return (
-                  <div key={category.id} className={classes.postCategory}>
-                    {category.name}
+                  <div key={postCategory.category.id} className={classes.postCategory}>
+                    {postCategory.category.name}
                   </div>
                 )
               })}

@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { CategoriesSelect } from './CategoriesSelect'
-import { Category } from '@/app/generated/prisma/client'
+import { Category } from '@/app/api/admin/posts/[id]/route'
 
 interface Props {
   mode: 'new' | 'edit'

@@ -1,11 +1,11 @@
 'use client'
 
-import { Category } from '@/app/generated/prisma/client'
+import { CategoriesIndexResponse } from '@/app/api/admin/categories/route'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 export default function Page() {
-  const [categories, setCategories] = useState<Category[]>([])
+  const [categories, setCategories] = useState<CategoriesIndexResponse["categories"]>([])
 
   useEffect(() => {
     const fetcher = async () => {

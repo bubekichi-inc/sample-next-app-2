@@ -1,6 +1,11 @@
 import { prisma } from '@/app/_libs/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
+export type Category = {
+  id: number
+  name: string
+}
+
 // 記事詳細APIのレスポンスの型
 export type PostShowResponse = {
   post: {
@@ -11,10 +16,7 @@ export type PostShowResponse = {
     createdAt: Date
     updatedAt: Date
     postCategories: {
-      category: {
-        id: number
-        name: string
-      }
+      category:Category
     }[]
   }
 }

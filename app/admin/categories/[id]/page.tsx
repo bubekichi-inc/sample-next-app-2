@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { CategoryForm } from '../_components/CategoryForm'
+import { CategoryShowResponse, UpdateCategoryRequestBody } from '@/app/api/admin/categories/[id]/route'
 
 export default function Page() {
   const [name, setName] = useState('')
@@ -17,13 +18,15 @@ export default function Page() {
     try {
       setIsSubmitting(true)
 
+      const body: UpdateCategoryRequestBody = { name }
+
       // カテゴリーを更新します。
       await fetch(`/api/admin/categories/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify(body),
       })
 
       alert('カテゴリーを更新しました。')
@@ -61,7 +64,7 @@ export default function Page() {
   useEffect(() => {
     const fetcher = async () => {
       const res = await fetch(`/api/admin/categories/${id}`)
-      const { category } = await res.json()
+      const { category }: CategoryShowResponse = await res.json()
       setName(category.name)
     }
 

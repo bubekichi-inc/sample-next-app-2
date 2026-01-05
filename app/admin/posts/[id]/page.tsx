@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { PostForm } from '../_components/PostForm'
-import { Category, Post } from '@/app/generated/prisma/client'
+import { Category, PostShowResponse, UpdatePostRequestBody } from '@/app/api/admin/posts/[id]/route'
 
 export default function Page() {
   const [title, setTitle] = useState('')
@@ -21,12 +21,14 @@ export default function Page() {
     try {
       setIsSubmitting(true)
 
+      const body: UpdatePostRequestBody = { title, content, thumbnailUrl, categories }
+
       await fetch(`/api/admin/posts/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ title, content, thumbnailUrl, categories }),
+        body: JSON.stringify(body),
       })
 
       alert('記事を更新しました。')
@@ -62,7 +64,7 @@ export default function Page() {
   useEffect(() => {
     const fetcher = async () => {
       const res = await fetch(`/api/admin/posts/${id}`)
-      const { post }: { post: Post } = await res.json()
+      const { post }: { post: PostShowResponse["post"] } = await res.json()
       setTitle(post.title)
       setContent(post.content)
       setThumbnailUrl(post.thumbnailUrl)

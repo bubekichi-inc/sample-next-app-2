@@ -3,11 +3,11 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import classes from '@/app/_styles/Home.module.scss'
-import { MicroCmsPost } from './_types/Post'
+import { PostsIndexResponse } from './api/posts/route'
 
 
 export default function Home() {
-  const [posts, setPosts] = useState<MicroCmsPost[]>([])
+  const [posts, setPosts] = useState<PostsIndexResponse["posts"]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -35,16 +35,16 @@ export default function Home() {
                     <div className={classes.postContent}>
                       <div className={classes.postInfo}>
                         <div className={classes.postDate}>
-                          {new Date(post.createdAt).toLocaleDateString()}
+                          {post.createdAt.toLocaleDateString()}
                         </div>
                         <div className={classes.postCategories}>
-                          {post.categories.map((category) => {
+                          {post.postCategories.map((postCategory) => {
                             return (
                               <div
-                                key={category.id}
+                                key={postCategory.category.id}
                                 className={classes.postCategory}
                               >
-                                {category.name}
+                                {postCategory.category.name}
                               </div>
                             )
                           })}

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { CategoryForm } from '../_components/CategoryForm'
+import { CreateCategoryRequestBody } from '@/app/api/admin/categories/route'
 
 export default function Page() {
   const [name, setName] = useState('')
@@ -16,13 +17,15 @@ export default function Page() {
     try {
       setIsSubmitting(true)
 
+      const body: CreateCategoryRequestBody = { name }
+
       // カテゴリーを作成します。
       const res = await fetch('/api/admin/categories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify(body),
       })
 
       // レスポンスから作成したカテゴリーのIDを取得します。
