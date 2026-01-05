@@ -4,33 +4,52 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Post {
-  id             Int            @id @default(autoincrement())
-  title          String
-  content        String
-  thumbnailUrl   String         @map("thumbnail_url")
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime       @updatedAt @map("updated_at")
-  postCategories PostCategory[]
+  id                Int            @id @default(autoincrement())
+  title             String
+  content           String
+  thumbnailImageKey String
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime
+  postCategories    PostCategory[]
+  PostTag           PostTag[]
 }
 
 model Category {
-  id        Int            @id @default(autoincrement())
-  name      String
-  createdAt DateTime       @default(now()) @map("created_at")
-  updatedAt DateTime       @updatedAt @map("updated_at")
-  posts     PostCategory[]
+  id           Int            @id @default(autoincrement())
+  name         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  PostCategory PostCategory[]
 }
 
 model PostCategory {
   id         Int      @id @default(autoincrement())
   postId     Int
-  categoryId Int      @map("category_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  Category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model PostTag {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  tagId     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  Tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  PostTag   PostTag[]
 }
