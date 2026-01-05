@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CategoriesSelect } from './CategoriesSelect'
 import { Category } from '@/app/api/admin/posts/[id]/route'
 import { v4 as uuidv4 } from 'uuid'  // 固有IDを生成するライブラリ
 import { supabase } from '@/app/_libs/supabase'
+import Image from 'next/image'
 
 
 interface Props {
@@ -12,8 +13,8 @@ interface Props {
   setTitle: (title: string) => void
   content: string
   setContent: (content: string) => void
-  thumbnailUrl: string
-  setThumbnailUrl: (thumbnailUrl: string) => void
+  thumbnailImageKey: string
+  setThumbnailImageKey: (thumbnailImageKey: string) => void
   categories: Category[]
   setCategories: (categories: Category[]) => void
   onSubmit: (e: React.FormEvent) => void
@@ -27,15 +28,34 @@ export const PostForm: React.FC<Props> = ({
   setTitle,
   content,
   setContent,
-  thumbnailUrl,
-  setThumbnailUrl,
+  thumbnailImageKey,
+  setThumbnailImageKey,
   categories,
   setCategories,
   onSubmit,
   onDelete,
   disabled
 }) => {
-  const [thumbnailImageKey, setThumbnailImageKey] = useState('')
+  const [thumbnailImageUrl, setThumbnailImageUrl] = useState<null | string>(
+    null,
+  )
+
+  useEffect(() => {
+    if (!thumbnailImageKey) return
+
+    // アップロード時に取得した、thumbnailImageKeyを用いて画像のURLを取得
+    const fetcher = async () => {
+      const {
+        data: { publicUrl },
+      } = await supabase.storage
+        .from('post_thumbnail')
+        .getPublicUrl(thumbnailImageKey)
+
+      setThumbnailImageUrl(publicUrl)
+    }
+
+    fetcher()
+  }, [thumbnailImageKey])
 
 
   const handleImageChange = async (
@@ -110,10 +130,20 @@ export const PostForm: React.FC<Props> = ({
           サムネイルURL
         </label>
         <input type="file" id="thumbnailImageKey" onChange={handleImageChange} accept="image/*" />
+        {thumbnailImageUrl && (
+          <div className="mt-2">
+            <Image
+              src={thumbnailImageUrl}
+              alt="thumbnail"
+              width={400}
+              height={400}
+            />
+          </div>
+        )}
       </div>
       <div>
         <label
-          htmlFor="thumbnailUrl"
+          htmlFor="categories"
           className="block text-sm font-medium text-gray-700"
         >
           カテゴリー

@@ -10,9 +10,7 @@ import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 export default function Page() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [thumbnailUrl, setThumbnailUrl] = useState(
-    'https://placehold.jp/800x400.png',
-  ) // 画像URLは、一旦このURL固定でお願いします。後ほど画像アップロード処理を実装します。
+  const [thumbnailImageKey, setThumbnailImageKey] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
@@ -27,7 +25,7 @@ export default function Page() {
     try {
       setIsSubmitting(true)
 
-      const body: CreatePostRequestBody = { title, content, thumbnailUrl, categories }
+      const body: CreatePostRequestBody = { title, content, thumbnailImageKey, categories }
 
       // 記事を作成します。
       const res = await fetch('/api/admin/posts', {
@@ -67,8 +65,8 @@ export default function Page() {
         setTitle={setTitle}
         content={content}
         setContent={setContent}
-        thumbnailUrl={thumbnailUrl}
-        setThumbnailUrl={setThumbnailUrl}
+        thumbnailImageKey={thumbnailImageKey}
+        setThumbnailImageKey={setThumbnailImageKey}
         categories={categories}
         setCategories={setCategories}
         onSubmit={handleSubmit}

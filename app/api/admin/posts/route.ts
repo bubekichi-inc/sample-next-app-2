@@ -7,7 +7,7 @@ export type PostIndexResponse = {
     id: number
     title: string
     content: string
-    thumbnailUrl: string
+    thumbnailImageKey: string
     createdAt: Date
     updatedAt: Date
     postCategories: {
@@ -62,7 +62,7 @@ export type CreatePostRequestBody = {
   title: string
   content: string
   categories: { id: number }[]
-  thumbnailUrl: string
+  thumbnailImageKey: string
 }
 
 // 投稿作成APIのレスポンスの型
@@ -86,15 +86,15 @@ export const POST = async (request: Request) => {
     // リクエストのbodyを取得
     const body: CreatePostRequestBody = await request.json()
 
-    // bodyの中からtitle, content, categories, thumbnailUrlを取り出す
-    const { title, content, categories, thumbnailUrl } = body
+    // bodyの中からtitle, content, categories, thumbnailKeyを取り出す
+    const { title, content, categories, thumbnailImageKey } = body
 
     // 投稿をDBに生成
     const data = await prisma.post.create({
       data: {
         title,
         content,
-        thumbnailUrl,
+        thumbnailImageKey,
       },
     })
 

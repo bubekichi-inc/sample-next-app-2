@@ -9,7 +9,7 @@ import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 export default function Page() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [thumbnailUrl, setThumbnailUrl] = useState('')
+  const [thumbnailImageKey, setThumbnailImageKey] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { id } = useParams()
@@ -26,7 +26,7 @@ export default function Page() {
     try {
       setIsSubmitting(true)
 
-      const body: UpdatePostRequestBody = { title, content, thumbnailUrl, categories }
+      const body: UpdatePostRequestBody = { title, content, thumbnailImageKey, categories }
 
       await fetch(`/api/admin/posts/${id}`, {
         method: 'PUT',
@@ -86,7 +86,7 @@ export default function Page() {
       const { post }: { post: PostShowResponse["post"] } = await res.json()
       setTitle(post.title)
       setContent(post.content)
-      setThumbnailUrl(post.thumbnailUrl)
+      setThumbnailImageKey(post.thumbnailImageKey)
       setCategories(post.postCategories.map((pc) => pc.category))
     }
 
@@ -105,8 +105,8 @@ export default function Page() {
         setTitle={setTitle}
         content={content}
         setContent={setContent}
-        thumbnailUrl={thumbnailUrl}
-        setThumbnailUrl={setThumbnailUrl}
+        thumbnailImageKey={thumbnailImageKey}
+        setThumbnailImageKey={setThumbnailImageKey}
         categories={categories}
         setCategories={setCategories}
         onSubmit={handleSubmit}

@@ -8,13 +8,13 @@ datasource db {
 }
 
 model Post {
-  id             Int            @id @default(autoincrement())
-  title          String
-  content        String
-  thumbnailUrl   String         @map("thumbnail_url")
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime       @updatedAt @map("updated_at")
-  postCategories PostCategory[]
+  id                Int            @id @default(autoincrement())
+  title             String
+  content           String
+  thumbnailImageKey String         @map("thumbnail_image_key")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+  postCategories    PostCategory[]
 }
 
 model Category {

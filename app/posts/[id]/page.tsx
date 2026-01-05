@@ -5,12 +5,33 @@ import classes from '@/app/_styles/Detail.module.scss'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { PostShowResponse } from '@/app/api/posts/[id]/route'
+import { supabase } from '@/app/_libs/supabase'
 
 export default function Page() {
   // react-routerのuseParamsを使うと、URLのパラメータを取得できます。
   const { id } = useParams()
   const [post, setPost] = useState<PostShowResponse["post"] | null>(null)
   const [loading, setLoading] = useState(true)
+  const [thumbnailImageUrl, setThumbnailImageUrl] = useState<null | string>(
+      null,
+    )
+
+    useEffect(() => {
+      if (!post?.thumbnailImageKey) return
+
+      // アップロード時に取得した、thumbnailImageKeyを用いて画像のURLを取得
+      const fetcher = async () => {
+        const {
+          data: { publicUrl },
+        } = await supabase.storage
+          .from('post_thumbnail')
+          .getPublicUrl(post.thumbnailImageKey)
+
+        setThumbnailImageUrl(publicUrl)
+      }
+
+      fetcher()
+    }, [post?.thumbnailImageKey])
 
   // APIでpostsを取得する処理をuseEffectで実行します。
   useEffect(() => {
@@ -35,9 +56,11 @@ export default function Page() {
   return (
     <div className={classes.container}>
       <div className={classes.post}>
-        <div className={classes.postImage}>
-          <Image src={post.thumbnailUrl} alt="thumbnail" height={1000} width={1000} />
-        </div>
+        {thumbnailImageUrl && (
+          <div className={classes.postImage}>
+            <Image src={thumbnailImageUrl} alt="thumbnail" height={1000} width={1000} />
+          </div>
+        )}
         <div className={classes.postContent}>
           <div className={classes.postInfo}>
             <div className={classes.postDate}>
