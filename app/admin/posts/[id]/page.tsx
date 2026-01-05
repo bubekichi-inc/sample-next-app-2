@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { PostForm } from '../_components/PostForm'
 import { Category, PostShowResponse, UpdatePostRequestBody } from '@/app/api/admin/posts/[id]/route'
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 
 export default function Page() {
   const [title, setTitle] = useState('')
@@ -14,9 +15,13 @@ export default function Page() {
   const { id } = useParams()
   const router = useRouter()
 
+  const { token } = useSupabaseSession()
+
   const handleSubmit = async (e: React.FormEvent) => {
     // フォームのデフォルトの動作をキャンセルします。
     e.preventDefault()
+
+    if (!token) return;
 
     try {
       setIsSubmitting(true)
@@ -27,6 +32,7 @@ export default function Page() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: token
         },
         body: JSON.stringify(body),
       })
@@ -42,12 +48,18 @@ export default function Page() {
   }
 
   const handleDeletePost = async () => {
+    if (!token) return;
+
     if (!confirm('記事を削除しますか？')) return
 
     try {
       setIsSubmitting(true)
       await fetch(`/api/admin/posts/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token
+        },
       })
 
       alert('記事を削除しました。')
@@ -62,8 +74,15 @@ export default function Page() {
   }
 
   useEffect(() => {
+    if (!token) return;
+
     const fetcher = async () => {
-      const res = await fetch(`/api/admin/posts/${id}`)
+      const res = await fetch(`/api/admin/posts/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token
+        },
+      })
       const { post }: { post: PostShowResponse["post"] } = await res.json()
       setTitle(post.title)
       setContent(post.content)
@@ -72,7 +91,7 @@ export default function Page() {
     }
 
     fetcher()
-  }, [id])
+  }, [id, token])
 
   return (
     <div className="container mx-auto px-4">

@@ -1,4 +1,5 @@
 
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 import { Category } from '@/app/api/admin/posts/[id]/route'
 import * as React from 'react'
 import { useEffect } from 'react'
@@ -15,6 +16,8 @@ export const CategoriesSelect: React.FC<Props> = ({
   disabled
 }) => {
   const [categories, setCategories] = React.useState<Category[]>([])
+
+  const { token } = useSupabaseSession()
 
   const toggleCategory = (id: number) => {
     if (disabled) return;
@@ -34,14 +37,21 @@ export const CategoriesSelect: React.FC<Props> = ({
   }
 
   useEffect(() => {
+    if (!token) return
+
     const fetcher = async () => {
-      const res = await fetch('/api/admin/categories')
+      const res = await fetch('/api/admin/categories', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token
+        },
+      })
       const { categories } = await res.json()
       setCategories(categories)
     }
 
     fetcher()
-  }, [])
+  }, [token])
 
   return (
     <div className="w-full">

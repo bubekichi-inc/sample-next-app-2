@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { PostForm } from '../_components/PostForm'
 import { Category } from '@/app/api/admin/posts/[id]/route'
 import { CreatePostRequestBody } from '@/app/api/admin/posts/route'
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 
 export default function Page() {
   const [title, setTitle] = useState('')
@@ -15,10 +16,13 @@ export default function Page() {
   const [categories, setCategories] = useState<Category[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
+  const { token } = useSupabaseSession()
 
   const handleSubmit = async (e: React.FormEvent) => {
     // フォームのデフォルトの動作をキャンセルします。
     e.preventDefault()
+
+    if (!token) return;
 
     try {
       setIsSubmitting(true)
@@ -30,6 +34,7 @@ export default function Page() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: token
         },
         body: JSON.stringify(body),
       })

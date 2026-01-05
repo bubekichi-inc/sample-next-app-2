@@ -4,16 +4,20 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { CategoryForm } from '../_components/CategoryForm'
 import { CategoryShowResponse, UpdateCategoryRequestBody } from '@/app/api/admin/categories/[id]/route'
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 
 export default function Page() {
   const [name, setName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { id } = useParams()
   const router = useRouter()
+  const { token } = useSupabaseSession()
 
   const handleSubmit = async (e: React.FormEvent) => {
     // フォームのデフォルトの動作をキャンセルします。
     e.preventDefault()
+
+    if (!token) return;
 
     try {
       setIsSubmitting(true)
@@ -25,6 +29,7 @@ export default function Page() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: token
         },
         body: JSON.stringify(body),
       })
@@ -40,6 +45,8 @@ export default function Page() {
   }
 
   const handleDeletePost = async () => {
+    if (!token) return;
+
     if (!confirm('カテゴリーを削除しますか？')) return
 
     try {
@@ -47,6 +54,10 @@ export default function Page() {
 
       await fetch(`/api/admin/categories/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token
+        },
       })
 
       alert('カテゴリーを削除しました。')
@@ -62,14 +73,21 @@ export default function Page() {
   }
 
   useEffect(() => {
+    if (!token) return;
+
     const fetcher = async () => {
-      const res = await fetch(`/api/admin/categories/${id}`)
+      const res = await fetch(`/api/admin/categories/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token
+        },
+      })
       const { category }: CategoryShowResponse = await res.json()
       setName(category.name)
     }
 
     fetcher()
-  }, [id])
+  }, [id, token])
 
   return (
     <div className="container mx-auto px-4">
