@@ -2,6 +2,16 @@
 import { prisma } from '@/app/_libs/prisma'
 import { NextResponse } from 'next/server'
 
+// カテゴリー一覧APIのレスポンスの型
+export type CategoriesIndexResponse = {
+  categories: {
+    id: number
+    name: string
+    createdAt: Date
+    updatedAt: Date
+  }[]
+}
+
 export const GET = async () => {
   try {
     // カテゴリーの一覧をDBから取得
@@ -12,16 +22,21 @@ export const GET = async () => {
     })
 
     // レスポンスを返す
-    return NextResponse.json({ status: 'OK', categories }, { status: 200 })
+    return NextResponse.json<CategoriesIndexResponse>({ categories }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
-      return NextResponse.json({ status: error.message }, { status: 400 })
+      return NextResponse.json({ message: error.message }, { status: 400 })
   }
 }
 
 // カテゴリーの作成時に送られてくるリクエストのbodyの型
-interface CreateCategoryRequestBody {
+export type CreateCategoryRequestBody = {
   name: string
+}
+
+// カテゴリー作成APIのレスポンスの型
+export type CreateCategoryResponse = {
+  id: number
 }
 
 export const POST = async (request: Request) => {
@@ -40,14 +55,12 @@ export const POST = async (request: Request) => {
     })
 
     // レスポンスを返す
-    return NextResponse.json({
-      status: 'OK',
-      message: '作成しました',
+    return NextResponse.json<CreateCategoryResponse>({
       id: data.id,
     })
   } catch (error) {
     if (error instanceof Error) {
-      return NextResponse.json({ status: error.message }, { status: 400 })
+      return NextResponse.json({ message: error.message }, { status: 400 })
     }
   }
 }

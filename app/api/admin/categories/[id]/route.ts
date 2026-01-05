@@ -1,6 +1,16 @@
 import { prisma } from '@/app/_libs/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
+// カテゴリー詳細APIのレスポンスの型
+export type CategoryShowResponse = {
+  category: {
+    id: number
+    name: string
+    createdAt: Date
+    updatedAt: Date
+  }
+}
+
 export const GET = async (
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -14,15 +24,22 @@ export const GET = async (
       },
     })
 
-    return NextResponse.json({ status: 'OK', category }, { status: 200 })
+    if (!category) {
+      return NextResponse.json(
+        { message: 'カテゴリーが見つかりません。' },
+        { status: 404 },
+      )
+    }
+
+    return NextResponse.json<CategoryShowResponse>({ category }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
-      return NextResponse.json({ status: error.message }, { status: 400 })
+      return NextResponse.json({ message: error.message }, { status: 400 })
   }
 }
 
 // カテゴリーの更新時に送られてくるリクエストのbodyの型
-interface UpdateCategoryRequestBody {
+export type UpdateCategoryRequestBody = {
   name: string
 }
 
@@ -38,7 +55,7 @@ export const PUT = async (
 
   try {
     // idを指定して、Categoryを更新
-    const category = await prisma.category.update({
+    await prisma.category.update({
       where: {
         id: parseInt(id),
       },
@@ -48,10 +65,10 @@ export const PUT = async (
     })
 
     // レスポンスを返す
-    return NextResponse.json({ status: 'OK', category }, { status: 200 })
+    return NextResponse.json({ message: 'OK' }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
-      return NextResponse.json({ status: error.message }, { status: 400 })
+      return NextResponse.json({ message: error.message }, { status: 400 })
   }
 }
 
@@ -71,9 +88,9 @@ export const DELETE = async (
     })
 
     // レスポンスを返す
-    return NextResponse.json({ status: 'OK' }, { status: 200 })
+    return NextResponse.json({ message: 'OK' }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
-      return NextResponse.json({ status: error.message }, { status: 400 })
+      return NextResponse.json({ message: error.message }, { status: 400 })
   }
 }
