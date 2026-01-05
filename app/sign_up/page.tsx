@@ -17,7 +17,7 @@ export default function Page() {
       email,
       password,
       options: {
-        emailRedirectTo: `http://localhost:3000/sign_in`,
+        emailRedirectTo: `${window.location.origin}/sign_in`,
       },
     })
     if (error) {
